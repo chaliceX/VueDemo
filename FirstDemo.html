@@ -1,17 +1,34 @@
 <!DOCTYPE html>
 <head>
 <script type="text/javascript" src=".\js\vue.js"></script>
+<style type="text/css">
+[v-cloak] {
+    /* 避免插值表达式的闪烁问题 */
+    display: none;
+}
+</style>
 </head>
 <body>
     <div id="vueContainer">
-        <div>{{msg}}</div>
+        <div v-cloak >{{msg}}</div>
+        <div  v-html="section"></div>
+        <div  v-text="section"></div>
+        <div  v-pre>跳过编译：{{section}}</div>
+        <div  >不跳过编译：{{section}}</div>
+        <div  v-once>只编译一次：{{section}}</div>
+        <hr/>
+        <div>{{modelData}}</div>
+        <input type="text" v-model="modelData">
     </div>
 
     <script>
         var vm = new Vue({
             el:'#vueContainer',
             data:{
-                msg:"Hello Vue!"}
+                msg:"Hello Vue!",
+                section:"<h1>一级标题</h1>",
+                modelData:"俺就是数据模型啦"
+            }
         })
     </script>
 </body>

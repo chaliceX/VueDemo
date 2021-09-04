@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分支循环</title>
+    <script src="./js/vue.js">
+    </script>
+</head>
+<body>
+<div id="vueContainer">
+    <div v-if="score >= 90">作弊了吧</div>
+    <div v-else-if="score >=60">60万岁，多一分浪费</div>
+    <div v-else>挂科补考吧，你</div>
+    <div v-show="showFlag" >使用了v-show指令的东东</div>
+    <input type="button" @click="changeShow" value="切换显示按钮">
+    <hr>
+    <p>循环遍历数据</p>
+    <ul>
+        <li :key= "index" v-for="(item,index) in list" v-if="item.gender == 'Femal'">{{item.name}}+ "---"+{{item.age}} </li>
+    </ul>
+
+   <ol>
+       <!-- 遍历数组的第一个对象的属性 -->
+       <li v-for="(item,key,index) in list[0]">值:+{{item}}+键：+{{key}} + 索引：+{{index}}        
+       </li>
+   </ol>
+</div>
+<script>
+        var vm = new Vue({
+            el:'#vueContainer',
+            data:{
+                score: 88,
+                showFlag: true,
+                list:[{name:"Lisa", gender:"Femal", age:24},{name:"Jisoo", gender:"Femal", age:23},{name:"Gennie", gender:"Middle", age:20}]
+            },
+            methods: {
+                changeShow: function () {
+                    this.showFlag = !this.showFlag;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

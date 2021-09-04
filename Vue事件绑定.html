@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事件绑定</title>
+
+    <script type="text/javascript" src="./js/vue.js"></script>
+
+    <style type="text/css">
+    .active{
+        width: 200px;
+        height: 300px;
+        background-color: blueviolet;
+    }
+
+    .domestic{
+        width: 100px;
+        height: 100px;
+        background-color: gray;
+    }
+
+    .greenTea{
+        width: 250px;
+        height: 250px;
+        background-color: greenyellow;
+    }
+    </style>
+</head>
+<body>
+    <div id="vueContainer">
+        <span>{{num}}</span><input type="button" v-on:click='num++' value="点我加加加">
+        <hr>
+        <div v-on:click='handle1'>{{msg}}</div>
+    
+        <hr>
+        <input type="button" value="GG" v-on:click='handle2'>{{msg}}
+        <hr>
+        <input type="button" value="带参数点击" @click='handle3(2,3,$event)'>{{result}}
+        <hr>
+        <div onclick="javascript : alert('冒泡到我这里了')" style="border: 1px; width: 100px; height: 100px;background-color: aqua;">
+        <button @click.stop = 'handle4'>Pick me , Pick me !</button>
+        <a @click.prevent.stop='handle2' href="https://www.baidu.com" target="new">Baidu</a>
+        </div>
+        <p>按键修饰符</p>
+        <input type="text" v-on:keyup.enter= 'handle1'>
+        <p>简单计算器</p>
+        <input type="text" v-model='inputNum1' placeholder="输入相加数字">
+        <input type="text" v-model='inputNum2' placeholder="输入相加数字">
+        <input type="button" v-on:click='calculate' value="点击相加">
+        <input type="text" readonly v-model='result'>
+        <hr>
+        <p>属性绑定v-bind, 简写：</p>
+        <a v-bind:href='url' target="new">逼你逼你</a>
+        <div :class={active:isActive,domestic:isDomestic} @click= 'setClass'></div>
+        <div :class='[greenTea]' @click= 'setClass'>在vue实例里面定义样式形参，指向实际css类名</div>
+        <div v-bind:style={background:myColor,width:myWidth,height:myHeight}></div>
+        <div v-bind:style="[myStyle]">自定义成员的内联样式</div>
+    </div>
+
+<script type="text/javascript">
+    var vm = new Vue({
+        el:'#vueContainer',
+        data:{
+            msg:'Just  a message',
+            num: 1,
+            result:0,
+            inputNum1:1,
+            inputNum2:'',
+            url:"https://www.bilibili.com",
+            isActive: true,
+            isDomestic: false,
+            greenTea:'greenTea',//属性指向实际的类名
+            myColor:'red',
+            myWidth:'100px',
+            myHeight:'153px',
+            myStyle:{'background-color': 'yellow', width:'250px',height:'200px'}
+
+        },
+        methods: {
+            handle1: function () {
+                this.msg = '那里不可以点的';
+            },
+            handle2: function (event) {
+                this.msg = "让我来看看是哪个小傻逼点的" + event.target.innerHTML;
+            },
+            handle3: function (a, b, envet) {
+                this.result = a + b;
+                console.log(event.target.value);
+            },
+            handle4:function (event){
+                // 原生阻止事件冒泡
+                //event.stopPropagation();
+                event.target.innerHTML = '买了一车蒙牛了呢！'
+            },
+            calculate: function (){
+                this.result = parseInt(this.inputNum1) + parseInt(this.inputNum2);
+            },
+            setClass: function (){
+                this.isActive = !this.isActive;//我尼玛，一定要加上this哦，不然就报错，isActice Undefined.
+                this.isDomestic = !this.isDomestic;
+            }
+
+
+        }
+
+});
+
+    </script>
+</body>
+</html>
