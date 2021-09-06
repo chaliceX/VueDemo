@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue第二天特性基础练习</title>
+    <script src="../js/vue.js">    </script>
+    <script type="text/css"></script>
+</head>
+<body>
+    <div id="vueContainer">
+        <form>
+           <label for="nameId">姓名</label> <input id="nameId" type="text" v-model.lazy="name"><br>
+           <label for="ageId">年龄</label> <input id="ageId" type="text" v-model.number="age" v-Focus><button @click.prevent="haveBirthdary" >过生日</button><br>
+           <input type="radio" name="gender" id="" v-model="gender" value="1"><label>男</label>   <input type="radio" name="gender" id="" v-model="gender" value="0"> <label for="">女</label>  <button @click.prevent="gender = gender =='0'?'1':'0'">去泰国</button><br>
+           
+           <label for="">爱好：</label>
+           <input type="checkbox" name="hobby" id="" value="1" v-model="hobby"><label for="">吃饭</label>
+           <input type="checkbox" name="hobby" id="" value="2" v-model="hobby"><label for="" >睡觉</label>
+           <input type="checkbox" name="hobby" id="" value="3" v-model="hobby"><label for="">打豆豆</label>
+            <br>
+           <label for="">出生地:</label><select v-model="location" multiple>
+               <option value="AH">安徽</option>
+               <option value="SC">四川</option>
+               <option value="CQ">重庆</option>
+               <option value="GZ">广州</option>
+           </select>
+           <br>
+           <textarea name="desc" id="" cols="30" rows="10" placeholder="自我介绍下" v-model.trim="desc"></textarea><label for="" >{{calcuLength}}</label>
+<p>自定义指令，除首字母外竟然不能有大写字母，不然就报错</p>
+<label for="">姓名经过过滤器=></label><div>{{name | toUpper('参数一')}}</div>
+
+        </form>
+    </div>
+
+
+    <script type="text/javascript">
+    //自定义全局指令 注意：指令的名字竟然不能有大写字母，不然就报错
+ 
+//     Vue.directive('Focus', {
+//   // 当被绑定的元素插入到 DOM 中时……
+//   inserted: function (el) {
+//     // 聚焦元素
+//     el.focus()
+//   }
+// })
+
+    var vm = new Vue({
+        el:'#vueContainer',
+        data:{
+            name:'Sara',
+            age:'',
+            gender:'1',
+            hobby:["2"],
+            location:["AH","SC"],
+            desc : "你是一颗大大大树"
+        },
+        methods:{
+            haveBirthdary: function (){
+                this.age = this.age + 1;
+            }},
+        computed: {
+            calcuLength: function () {
+                return this.desc.split('').length;
+            }
+        },
+        directives:{
+            "Focus": {
+                inserted: function (el) {
+                    el.focus();
+                }
+            }
+        },
+        watch: {
+            //监听名字
+            name: function () {
+                if (this.name == "Jsoon") alert("BlackPink");
+                if (this.name == "Yoona") alert("Girls Generation");
+            }
+        },
+        filters: {
+            toUpper: function (value, arg1) {
+                console.log(arg1);
+                return value.toUpperCase();
+            }
+        }
+
+    });
+    </script>
+</body>
+</html>
