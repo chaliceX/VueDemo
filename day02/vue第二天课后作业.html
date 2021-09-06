@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+    <!---   2CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <section id="todoapp" class="todoapp">
+        <header class="header">
+            <h1>todos</h1>
+            <input placeholder="What needs to be done?" class="new-todo" @keyup.enter="addTodo">
+        </header>
+        <section class="main">
+            <input id="toggle-all" type="checkbox" class="toggle-all" @click="selectAll">
+            <label for="toggle-all">Mark all as complete</label>
+            <ul class="todo-list">
+
+                <li v-for="(item,index) in todos" :key="item.id" :class="{completed:item.completed}">
+                    <div class="view">
+                        <input type="checkbox" class="toggle">
+                        <label>{{item.title}}</label>
+                        <button class="destroy" @click="removeTodo(item.id)"></button>
+                    </div>
+                    <input class="edit">
+                </li>
+
+                <!-- <li class="">
+                    <div class="view">
+                        <input type="checkbox" class="toggle">
+                        <label>吃饭</label>
+                        <button class="destroy"></button>
+                    </div>
+                    <input class="edit">
+                </li>
+                <li class="">
+                    <div class="view">
+                        <input type="checkbox" class="toggle">
+                        <label>睡觉</label>
+                        <button class="destroy"></button>
+                    </div> <input class="edit">
+                </li>
+                <li class="completed">
+                    <div class="view">
+                        <input type="checkbox" class="toggle">
+                        <label>打豆豆</label>
+                        <button class="destroy">
+                        </button>
+                    </div>
+                    <input class="edit">
+                </li> -->
+            
+            </ul>
+        </section>
+        <footer class="footer">
+            <span class="todo-count">
+                <strong>{{leftTodosNum}}</strong> item left</span>
+            <ul class="filters">
+                <li><a href="#/" class="selected">All</a></li>
+                <li><a href="#/active">Active</a></li>
+                <li><a href="#/completed">Completed</a></li>
+            </ul>
+            <button class="clear-completed">Clear completed</button>
+        </footer>
+    </section>
+
+    <script>
+        var vm = new Vue({
+            el: "#todoapp",
+            data: {
+                todos: [{
+                    id: 1,
+                    title: '吃饭',
+                    completed: false
+                }, {
+                    id: 2,
+                    title: '睡觉',
+                    completed: false
+                }, {
+                    id: 3,
+                    title: '打豆豆',
+                    completed: true
+                }],
+                allInflag: false,
+            },
+            methods: {
+                addTodo: function (event) {
+                    //获取数组中id最大值并+1，添加新的数据
+                    this.todos.sort(function (a, b) {
+                        return a.id - b.id; //由小到大排序，会改变数组;
+                    });
+                    var newId = this.todos[this.todos.length - 1].id + 1;
+
+                    //添加新对象
+                    this.todos.push({
+                        id: newId,
+                        title: event.target.value,
+                        completed: false
+                    });
+
+                    //清空
+                    event.target.value = '';
+                },
+                removeTodo: function (id){
+                    //根据id找到该元素
+                    var newArr = this.todos.filter(function (item){
+                        return item.id == id ;
+                    })
+                
+                    //根据元素找到对应数组中的索引
+                    var index = this.todos.indexOf(newArr[0]);
+
+                    //脱掉脱掉
+                    this.todos.pop(index,1);
+                },
+                selectAll : function (event){
+                    //如果是选中了，则allIn,不然全输了
+                    if(event.target.checked){
+                        this.allInflag = true;
+                    }else{
+                        this.allInflag = false;
+                    }
+                }
+            },
+            watch:{
+                allInflag: function (){
+                    //监听全选按钮，点击即为全选和全不选                
+                    // this.todos.forEach(function (item, index){
+                    //     item.completed = this.allInflag;    //这里的this他妈都不认识他了，应该是window了。
+                    // });
+                    this.todos.forEach((item, index) => item.completed = this.allInflag)
+                }
+            },
+            computed: {
+                leftTodosNum : function(){
+                    var newArr = this.todos.filter((item) => item.completed == false);
+                    return newArr.length;
+                }
+            }    
+        })
+    </script>
+</body>
+</html>
