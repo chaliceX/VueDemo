@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解开组件化开发的丑陋面纱</title>
+    <script src="../js/vue.js"></script>
+
+    <style type="text/css">
+    </style>
+</head>
+<body>
+    <div id="app">
+        <cha-link></cha-link>
+        <cha-partcomp1></cha-partcomp1>
+        <cha-partcomp2></cha-partcomp2><br>
+        <!-- 看到没，组件重用时，数据亦是独立的-->
+        <cha-button-counter></cha-button-counter>
+        <cha-button-counter></cha-button-counter>
+        <cha-button-counter></cha-button-counter>
+        <p>---父组件向子组件传值---</p>
+        <label for="">父组件内容输入框:</label><input type="text" v-model="content">
+        <cha-msg :title="'父亲的肯定'" :content="content"></cha-msg>
+        <p>---子组件向父组件传值---</p>
+        <div :style="{fontSize: fontSize+'px'}">{{content}}</div>
+        <cha-enlarge-button :size="2" @enlarge="handleEnlarge($event)"></cha-enlarge-button>
+        <cha-enlarge-button :size="4" @enlarge="handleEnlarge($event)"></cha-enlarge-button>
+        <p>兄弟之间：事件中心传值</p>
+        <cha-msg-div ></cha-msg-div>
+        <harry-msg-div ></harry-msg-div>
+        <button @click="destroyEvents">销毁事件</button>
+        <p>组件插槽</p>
+        <cha-article>
+            文章内容文章内容文章内容文章内容<a href="www.baidu.com">甚至还有购买连接</a>
+
+            <p slot="footer">尾部呀呀呀呀</p>
+
+            <template slot="header">
+                <p>头部一，爪八个</p>
+                <p>头部二，那么大个</p>
+            </template>
+        </cha-article>
+        <!--稍微有点意思的作用域插槽-->
+        <cha-list :list="computerList">
+            <!-- 找到子组件的插槽属性 -->
+            <template slot-scope="slotPPS">
+                <strong v-if="slotPPS.info == 'Apple'">{{slotPPS.info}}果子就是高贵</strong>
+                <span v-else style="color: gray;">{{slotPPS.info}}垃圾</span>
+            </template>
+        </cha-list>
+
+    </div>
+
+    <script type="text/javascript">
+
+        //注册事件中心，处理组件事件
+        var hub = new Vue();
+        //注册全局组件
+        Vue.component("cha-link", {
+            //data:return function(){}
+            template: `<div>
+                <a href="https://www.bing.com">卡利斯的超链接组件</a>
+            </div>`
+        });
+
+        Vue.component("cha-button-counter", {
+            data: function () {
+                return {
+                    count: 1
+                }
+            },
+            template: `<button @click="addCount">该按钮点击了{{count}}次</button>`,
+            methods: {
+                addCount: function () {
+                    this.count++;
+                }
+            }
+        });
+
+        Vue.component("cha-msg",{
+            props:["title","content"],
+            data:function (){
+                return {
+                    msg:"cha-msg组件本身内容"
+                };
+            },
+            template:`<div>
+                        {{msg + '***父组件静态：'+title + "***父组件动态：" + content}}
+                    </div>`
+        });
+
+        //字体变大组件
+        Vue.component("cha-enlarge-button", {
+            props:["size"],
+            template:`<button @click="$emit('enlarge', size)">点击字体变大{{size}}</button>`
+        });
+
+        //消息Div组件
+            Vue.component("cha-msg-div", {
+                props: ['content'],
+                data: function () {
+                    return {
+                        msg: "chailce heard that:"
+                    }
+                },
+                template: `
+                <div>
+                    <input type="text" :value="msg">
+                    <button @click="handle">chalice说话</button>
+                    </div>`,
+                methods: {
+                    handle: function () {
+                        //触发事件
+                        hub.$emit("chaliceCall", "阿威十八式！");
+                        console.log("chalice喊了");
+                    }
+                },
+                mounted: function () {
+                    hub.$on("harryCall", (val) => { console.log("chalice听到了");this.msg += val; })
+                }
+            })
+            Vue.component("harry-msg-div", {
+                props: ['content'],
+                data: function () {
+                    return {
+                        msg: "harry heard that:"
+                    }
+                },
+                template: `<div>
+                    <input type="text" :value="msg">
+                    <button @click="handle">harry说话</button>
+                    </div>`,
+                methods: {
+                    handle: function () {
+                        //触发事件
+                        hub.$emit("harryCall", "牛头人 forever！");
+                        console.log("harry喊了");
+                    }
+                },
+                mounted: function () {
+                    hub.$on("chaliceCall", (val) => { console.log("harry听到了");this.msg += val; })
+                }
+            })
+        
+        //组件插槽
+        Vue.component("cha-article", {
+            template:`<section>
+                <h1>我来组成头部 <slot name="header"></slot></h1>
+                <p><slot>木有东西时的默认值</slot></p>
+                <h3>我来组成尾部 <slot name="footer"></slot></h3>
+                </section>`
+        })
+
+        //组件插槽之作用域插槽
+        Vue.component("cha-list", {
+            props:["list"],
+            template:`<ol>
+               
+                <li :key="index" v-for="(item, index) in list">
+                    <!-- 子组件直接在插槽上定义个属性，传出去-->
+                    <slot :info="item" >{{item}} </slot></li>
+                </ol>`
+
+        })
+
+
+        //局部组件在外面先定义
+        var partcomp2 = {
+            data: function () {
+                return {
+                    content: "俺也是局部组件,外部为先"
+                }
+            },
+            template: '<input type="text" v-model=content>'
+        }
+        //VUE实例，也是根容器
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                content:"爸爸的教训",
+                fontSize: 10,
+                computerList: ["Apple", "Lenovo", "MicroSoft", "HP"]
+            },
+            methods: {
+                handleEnlarge: function (value){
+                    this.fontSize += value;
+                },
+                destroyEvents:function (){
+                    //事件中心，销毁事件
+                    hub.$off("chaliceCall");
+                    hub.$off("harryCall");                
+                }                
+            },
+            components: {
+                //局部组件们，一般在外部将局部组件拼接完成
+                "cha-partcomp1": {
+                    data: function () {
+                        return {
+                            content: "俺是局部组件,内部拼接"
+                        }
+                    },
+                    template: '<input type="text" v-model=content>'
+                },
+                "cha-partcomp2": partcomp2
+            }
+        });
+    </script>
+</body>
+</html>

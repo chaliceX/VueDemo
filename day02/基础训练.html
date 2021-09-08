@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vue第二天特性基础练习</title>
     <script src="../js/vue.js">    </script>
-    <script type="text/css"></script>
+    <style type="text/css"></style>
 </head>
 <body>
     <div id="vueContainer">
@@ -28,7 +28,7 @@
            </select>
            <br>
            <textarea name="desc" id="" cols="30" rows="10" placeholder="自我介绍下" v-model.trim="desc"></textarea><label for="" >{{calcuLength}}</label>
-<p>自定义指令，除首字母外竟然不能有大写字母，不然就报错</p>
+<p>自定义指令，除首字母外竟然不能有大写字母，不然就报错 (原因：html不区分大小写)</p>
 <label for="">姓名经过过滤器=></label><div>{{name | toUpper('参数一')}}</div>
 
         </form>
@@ -45,7 +45,6 @@
 //     el.focus()
 //   }
 // })
-
     var vm = new Vue({
         el:'#vueContainer',
         data:{
