@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于Promise的新型前后端交互</title>
+    <script type="text/javascript" src="../js/axios.js"></script>
+</head>
+<body>
+    
+    <script type="text/javascript">
+    //基于Promise的调用
+
+    //封装一下下Promise
+    function queryData(url){
+      var p = new Promise(function (resolve, reject){
+        //方法内部调用异步请求
+        var xhr = new  XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+          if(xhr.readyState != 4) return;
+          if(xhr.readyState == 4 && xhr.status == 200) {
+            //处理正常的情况
+            resolve(xhr.responseText);
+          }else{
+           //处理异常情况
+            reject('服务器错误');
+          }
+        };
+        xhr.open('get', url);
+        //xhr.open('get', "http://localhost:25660/api/book");
+        xhr.send(null);
+
+        return p;
+    })
+    }
+
+    // string url = "http://localhost:25660/api/book"
+    //queryData()
+
+
+    /*
+    var p = new Promise(function (resolve, reject){
+        //方法内部调用异步请求
+        var xhr = new  XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+          if(xhr.readyState != 4) return;
+          if(xhr.readyState == 4 && xhr.status == 200) {
+            //处理正常的情况
+            resolve(xhr.responseText);
+          }else{
+           //处理异常情况
+            reject('服务器错误');
+          }
+        };
+        //xhr.open('get', url);
+        xhr.open('get', "http://localhost:25660/api/book");
+        xhr.send(null);
+    })
+
+    p
+    .then(function(data){
+        //成功了执行
+        console.log(typeof(data));
+        console.log("成功执行");
+        console.log(data);
+    },function(data){
+        //异常了执行
+        console.log(typeof(data));
+        console.log("异常执行");
+        console.log(data);
+    }).catch(function(data){
+      console.log("Promise里面的catch块执行了");
+      console.log(data);
+    })
+    .finally(function(){
+      console.log("Finally块执行了");
+    })
+    */
+    
+    //基于Fetch的调用
+
+    // fetch("http://localhost:25660/api/book/4?name=我&age=25",{
+    //   method:"get",
+    // })
+    // .then(function(data){
+    //   //现在还是被封装后的数据
+    //   console.log(typeof(data));
+    //   console.log(data);
+    //   return data.text();
+    // }).then(function(data){
+    //   console.log(data);
+    // })
+
+    // fetch("http://localhost:25660/api/book?name=我&age=25",{
+    //   method:"post",
+    //  //传递数据 , form表单形式
+    //   // body: 'weight=55&boot=B',
+    //   // headers: {
+    //   //               'Content-Type': 'application/x-www-form-urlencoded'
+    //   //           }
+
+    //   body:JSON.stringify({
+    //     gender:"女",
+    //     height:170
+    //   }),
+    //   headers : {
+    //     'content-Type' : 'application/json'
+    //   }
+    // })
+    // .then(function(data){
+    //   //现在还是被封装后的数据
+    //   console.log(typeof(data));
+    //   console.log(data);
+    //   return data.text();
+    // }).then(function(data){
+    //   console.log(data);
+    // })
+
+  //基于axios的多个异步调用
+  // axios.get("http://localhost:25660/api/book/3?age=25",{
+  //   params:{
+  //     name : "它" //直接拼接到了URL后面了呢
+  //   }
+  // })
+  // .then(function(res){
+  //   console.log(res);
+  //   console.log(res.data);//此数据竟然直接被转化成对象了呢
+  // })
+
+  // axios.post("http://localhost:25660/api/book",{
+  //     name : "它", //post方式,很明显不能再用params传值了,直接在对象里面写,传递时是body的json对象了
+  //     height: "170",
+  //     gender: "女"    
+  // })
+  // .then(function(res){
+  //   console.log(res);
+  //   console.log(res.data);//此数据竟然直接被转化成对象了呢
+  // })
+
+  var params = new URLSearchParams();
+  params.append("height","180");
+  params.append("gender","难");
+
+
+  axios.put("http://localhost:25660/api/book",params)
+  .then(function(res){
+    console.log(res);
+    console.log(res.data);//此数据竟然直接被转化成对象了呢
+  })
+    
+    </script>
+</body>
+</html>
