@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端路由原生Hash</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- Vue实例控制的区域 -->
+    <div id="app">
+
+        <a href="#/Finance" >财经</a>
+        <a href="#/Politic" >政治</a>
+        <a href="#/Girls" >美女</a>
+        <a href="#/Foods" >美食</a>
+
+        <!-- 组件占位符 -->
+        <component :is="compName"></component>
+    </div>
+
+    <script type="text/javascript">
+    
+// window.onhashchange = function (){
+//     console.log(location.hash)
+// }
+
+const finance = {
+    template: `<div><h1>人为财死</h1></div>`
+}
+const politic = {
+    template: `<div><h1>权力==春药</h1></div>`
+}
+const girls = {
+    template: `<div><h1>食色性也</h1></div>`
+}
+const foods = {
+    template: `<div><h1>鸟为食亡</h1></div>`
+}
+
+// 创建Vue实例
+const vm = new Vue({
+    el:"#app",
+    data:{
+compName : "finance"
+    },
+    methods:{
+
+    },
+    components:{
+        //ES新特性，属性和变量一致的简写
+        finance,
+        politic,
+        girls,
+        foods
+    }
+});
+
+    </script>
+</body>
+</html>

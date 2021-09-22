@@ -8,8 +8,34 @@
     <script type="text/javascript" src="../js/axios.js"></script>
 </head>
 <body>
-    
     <script type="text/javascript">
+      //设置 艾克斯奥思 的全局参数
+      axios.defaults.baseURL = "http://localhost:25660/api/";
+      axios.defaults.timeout = 5000;
+      //配置公共的请求头
+      axios.defaults.headers.common['Authorization'] = "GGMMYQL"   //AUTH_TOKEN;
+      // 配置公共的 post 的 Content-Type
+      //axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+      //设置 阿修斯 的拦截器
+      //请求拦截器
+      axios.interceptors.request.use(function (config){
+        config.headers.myToken = "kemoji"; 
+
+        console.log("发送请求前被监听了~！")
+        return config;
+
+      });
+
+      axios.interceptors.response.use(function (res){
+
+        console.log("窃听风云之HTTP 回应");
+        return res;
+      }, function (res){
+        console.log("没想到，失败了也能监听"+ res);
+      })
+
+
     //基于Promise的调用
 
     //封装一下下Promise
@@ -143,11 +169,22 @@
   params.append("gender","难");
 
 
-  axios.put("http://localhost:25660/api/book",params)
-  .then(function(res){
-    console.log(res);
-    console.log(res.data);//此数据竟然直接被转化成对象了呢
-  })
+  // axios.put("http://localhost:25660/api/book",params)
+  // .then(function(res){
+  //   console.log(res);
+  //   console.log(res.data);//此数据竟然直接被转化成对象了呢
+  // })
+
+   async function ordinaryCall(){
+    
+    var data1 = await axios.get("http://localhost:25660/api/book/4",params)
+    var data2 = await axios.put("http://localhost:25660/api/book",params)
+    var data3 = await axios.delete("http://localhost:25660/api/book",params)
+    console.log(data1 + "---"+ data2 + "---" + data3)
+  }
+
+  ordinaryCall();
+  console.log("后发先至！");
     
     </script>
 </body>

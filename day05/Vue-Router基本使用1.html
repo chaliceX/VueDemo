@@ -14,13 +14,18 @@
     <!-- Vue实例控制区域 -->
     <div id="app">
         <!-- 路由链接标签，默认会渲染成 a 标签 -->
-        <router-link to="">金融</router-link>
-        <router-link to="">政治</router-link>
-        <router-link to="">科技</router-link>
-        <router-link to="">娱乐</router-link>
+        <router-link to="/finance">金融</router-link>
+        <router-link to="/politics">政治</router-link>
+        <router-link to="/technology">科技</router-link>
+        <router-link to="/entertainment">娱乐</router-link>
 
         <!-- 组件占位符 -->
-        <component :is="compName"> </component>
+        <!-- <component :is="compName"> </component> -->
+
+        <!-- 路由填充位 -->
+        <router-view></router-view>
+
+
     </div>
 
 
@@ -48,19 +53,33 @@
             <p><cite>失控玩家</cite>盗版已出</P>
         </div>`
         }
+
+        //路由对象
+        const myRouter = new VueRouter({
+            routes:[
+                {path:"/", redirect:"/entertainment"},  //路由重定向
+                {path:"/finance", component:finance},
+                {path:"/politics", component:politics},
+                {path:"/technology", component:technology},
+                {path:"/entertainment", component:entertainment},
+            ]
+        });
+
         //Vue实例
         const vm = new Vue({
 
             el: "#app",
             data: {
-                compoName: "finance"
+                compName: "finance"
             },
             components: {
                 finance,
                 politics,
                 technology,
                 entertainment
-            }
+            },
+            //挂在路由对象
+            router: myRouter
 
         });
     </script>

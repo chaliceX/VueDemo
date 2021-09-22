@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端路由</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+    <script type="text/javascript" src="../js/vue-router-v3.5.2.js"></script>
+
+</head>
+<body>
+
+    <!-- Vue实例控制区域 -->
+    <div id="app">
+        <!-- 路由链接标签，默认会渲染成 a 标签 -->
+        <router-link to="/finance">金融</router-link>
+        <router-link to="/politics">政治</router-link>
+        <router-link to="/technology">科技</router-link>
+        <router-link to="/entertainment">娱乐</router-link>
+        <router-link to="/user">用户</router-link>
+
+        <!-- 组件占位符 -->
+        <!-- <component :is="compName"> </component> -->
+
+        <!-- 路由填充位 -->
+        <router-view></router-view>
+
+
+    </div>
+
+
+    <script type="text/javascript">
+
+        //组件定义
+
+        const finance = {
+            template: `<div>
+            <p>今日原油宝，适宜买入</P>
+        </div>`
+        }
+        const politics = {
+            template: `<div>
+            <p>少说，多听，少信</P>
+        </div>`
+        }
+        const technology = {
+            template: `<div>
+            <p>石墨烯内裤，9.9包邮</P>
+        </div>`
+        }
+        const entertainment = {
+            template: `<div>
+            <p><cite>失控玩家</cite>盗版已出</P>
+            <router-link to="/entertainment/movie">电影</router-link>
+            <router-link to="/entertainment/pornMovie">小电影</router-link>
+
+            <router-view></router-view>
+        </div>`
+        }
+
+        const movieType = {
+            props:['type', 'name', 'domainName'],
+            template: `<div>
+                    电影类型：{{type}} </br>
+                    网站名：{{name}} </br>
+                    地址{{domainName}} </br>
+                </div>`
+        }
+
+        const account =  {
+                    data: function () {
+                        return {
+                            content: "俺是局部组件,俗名账户设置"
+                        }
+                    },
+                    template: '<input type="text" v-model=content>'
+                };
+        const resume =  {
+                    data: function () {
+                        return {
+                            content: "自我展示页"
+                        }
+                    },
+                    template: '<input type="text" v-model=content>'
+                };
+
+        const user = {
+                template: `<div>
+                    <h1>用户组件</h1>
+                    <router-link to="/user/account">账户设置</router-link>
+                    <router-link to="/user/resume">自我展示</router-link>
+                    <router-link to="/user/chalice">用户chalice</router-link>
+                    <router-link to="/user/Harry">用户Harry</router-link>
+
+                    <router-view></router-view>
+                </div>`,
+                components:{
+                         //局部组件们，一般在外部将局部组件拼接完成
+         
+                }
+
+            }
+
+        const showName = {
+            template:`<div>
+                My name is {{$route.params.name}}
+                </div>`
+        }
+
+            //路由对象
+            const myRouter = new VueRouter({
+                routes: [
+                    { path: "/", redirect: "/entertainment" },  //路由重定向
+                    { path: "/finance", component: finance },
+                    { path: "/politics", component: politics },
+                    { path: "/technology", component: technology },
+                    {
+                        path: "/entertainment",
+                        component: entertainment,
+                        //children:[{path:"/entertainment/:type", component: movieType, props: true}]
+                        //children:[{path:"/entertainment/:type", component: movieType, props: { name:'豆瓣', domainName:'www.douban.com'}}]  //这种写法就放弃了路由后面的路径参数了
+                        children: [{
+                            path: "/entertainment/:type", component: movieType, props: function (route) {
+                                if (route.params.type == 'movie')
+                                    return { type: route.params.type, name: '豆瓣', domainName: 'www.douban.com' }
+                                if (route.params.type == "pornMovie")
+                                    return { type: route.params.type, name: 'P站', domainName: 'www.gayHub.com' }
+                            }
+                        }]  //props使用函数传参这种写法就都有了，参数传递了路由对象进入方法
+                    },
+                    {
+                        path: "/user",
+                        component: user,
+                        children: [{ path: "/user/account", component: account }, { path: "/user/resume", component: resume }, {path:"/user/:name", component: showName}]
+                    },
+                ]
+            });
+
+        //Vue实例
+        const vm = new Vue({
+
+            el: "#app",
+            data: {
+                compName: "finance"
+            },
+            components: {
+                //finance,
+                politics,
+                technology,
+                entertainment,
+                account,
+                resume
+
+            },
+            //挂在路由对象
+            router: myRouter
+
+        });
+    </script>
+</body>
+</html>
